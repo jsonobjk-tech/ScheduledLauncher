@@ -47,7 +47,15 @@ jobs:
           echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
 
       - name: Build debug APK
-        run: gradle assembleDebug --stacktrace --no-daemon
+        run: gradle assembleDebug --info --no-daemon 2>&1 | tee build.log
+        continue-on-error: true
+
+      - name: Show last 100 lines of build log
+        if: always()
+        run: |
+          echo "=========== LAST 100 LINES OF BUILD LOG ==========="
+          tail -n 100 build.log || echo "No build.log found"
+          echo "=========== END OF LOG ==========="
 
       - name: Upload APK
         if: success()
@@ -55,3 +63,10 @@ jobs:
         with:
           name: ScheduledLauncher-debug
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload full build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log

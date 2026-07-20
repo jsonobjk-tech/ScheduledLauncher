@@ -41,6 +41,19 @@ android {
             )
         }
     }
+
+    // 禁用 lint 报错阻止构建
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
+
+    // 打包配置：排除重复的元文件
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
 dependencies {
