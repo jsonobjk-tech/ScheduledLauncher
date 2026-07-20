@@ -44,7 +44,11 @@ jobs:
 
             echo ""
             echo "########## ERROR LINES ##########"
-            grep -iE "error:|error!|ERROR:" full-log.txt | head -n 50 || echo "(no error lines)"
+            grep -iE "error:|error!|ERROR:|^e: |^w: " full-log.txt | head -n 80 || echo "(no error lines)"
+
+            echo ""
+            echo "########## KOTLIN COMPILE ERRORS ##########"
+            grep -E "^e: file:" full-log.txt | head -n 40 || echo "(no kotlin errors)"
 
             echo ""
             echo "########## What went wrong section ##########"

@@ -73,7 +73,7 @@ fun AppPickerDialog(
                                     onAppSelected(app.packageName, app.appName)
                                 }
                             )
-                            HorizontalDivider()
+                            Divider()
                         }
                     }
                 }
