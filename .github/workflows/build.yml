@@ -28,15 +28,33 @@ jobs:
           unzip -q gradle-8.5-bin.zip
           echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
 
-      - name: Build debug APK (capture full log)
+      - name: Build debug APK
         run: |
           set +e
-          gradle assembleDebug --stacktrace --no-daemon > full-log.txt 2>&1
+          gradle assembleDebug --no-daemon > full-log.txt 2>&1
           BUILD_EXIT=$?
-          echo "========== Build exit code: $BUILD_EXIT =========="
+
           echo ""
-          echo "========== Last 150 lines of build log =========="
-          tail -n 150 full-log.txt
+          echo "########## BUILD EXIT CODE: $BUILD_EXIT ##########"
+          echo ""
+
+          if [ $BUILD_EXIT -ne 0 ]; then
+            echo "########## FAILED TASKS ##########"
+            grep -E "^> Task.*FAILED" full-log.txt || echo "(no FAILED task line)"
+
+            echo ""
+            echo "########## ERROR LINES ##########"
+            grep -iE "error:|error!|ERROR:" full-log.txt | head -n 50 || echo "(no error lines)"
+
+            echo ""
+            echo "########## What went wrong section ##########"
+            sed -n '/^\* What went wrong:/,/^\* Try:/p' full-log.txt || echo "(no section)"
+
+            echo ""
+            echo "########## FAILURE section ##########"
+            grep -A 5 "^FAILURE:" full-log.txt || echo "(no FAILURE line)"
+          fi
+
           exit $BUILD_EXIT
 
       - name: Upload APK
