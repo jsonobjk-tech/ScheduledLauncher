@@ -48,7 +48,11 @@ jobs:
 
             echo ""
             echo "########## KOTLIN COMPILE ERRORS ##########"
-            grep -E "^e: file:" full-log.txt | head -n 40 || echo "(no kotlin errors)"
+            grep -E "^e: |^w: |Unresolved reference|error:" full-log.txt | head -n 60 || echo "(no kotlin errors)"
+
+            echo ""
+            echo "########## LAST 80 LINES BEFORE FAILURE ##########"
+            grep -n "FAILURE:" full-log.txt | head -1 | cut -d: -f1 | xargs -I{} sh -c 'START=$(($1-80)); [ $START -lt 1 ] && START=1; sed -n "${START},$1p" full-log.txt' _ {} || tail -n 80 full-log.txt
 
             echo ""
             echo "########## What went wrong section ##########"

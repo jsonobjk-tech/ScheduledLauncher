@@ -25,6 +25,7 @@ data class AppInfo(
 /**
  * 应用选择弹窗 —— 列出所有已安装的可启动应用
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppPickerDialog(
     onDismiss: () -> Unit,
@@ -73,7 +74,7 @@ fun AppPickerDialog(
                                     onAppSelected(app.packageName, app.appName)
                                 }
                             )
-                            Divider()
+                            HorizontalDivider()
                         }
                     }
                 }
