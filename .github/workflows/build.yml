@@ -33,7 +33,6 @@ jobs:
 
           echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> $GITHUB_ENV
           echo "ANDROID_HOME=$SDK_ROOT" >> $GITHUB_ENV
-          echo "$SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
           yes | $SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
           $SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
@@ -41,18 +40,14 @@ jobs:
             "build-tools;34.0.0" \
             "platform-tools"
 
-      - name: Show environment
+      - name: Install Gradle 8.5
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          echo "JAVA_HOME=$JAVA_HOME"
-          java -version
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
+          unzip -q gradle-8.5-bin.zip
+          echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
 
-      - name: Fix gradlew (strip CRLF) and build
-        run: |
-          sed -i 's/\r$//' gradlew
-          chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace --no-daemon
+      - name: Build debug APK
+        run: gradle assembleDebug --stacktrace --no-daemon
 
       - name: Upload APK
         if: success()
